@@ -78,16 +78,20 @@ title('Output of the Rectangular Pulse');
 
 
 %% Correlator Implementation
-correlator_output = zeros(1, length(convolved_stream)); % Preallocate output
-for i = 1:5:length(convolved_stream)-4  % increments by 5 as there is 5 samples/symbol
+% Preallocate output
+correlator_output = zeros(1, length(convolved_stream)); 
+
+% Iterate over symbols (5 samples per symbol)
+for i = 1:5:length(convolved_stream)-4  
     sum = 0;
-    for j = 0:1:4 % iterates over the 5 samples
-% Performs correlation by taking the dot product between the received
-% signal and the pulse, Accumulates energy over one symbol duration
+    for j = 0:4 
+        % Compute dot product (correlation)
         sum = sum + convolved_stream(i+j) * triangular_pulse(j+1);
-        correlator_output(i+j) = sum;
     end
+    % Store the final accumulated sum at the last sample of the symbol
+    correlator_output(i+4) = sum; 
 end
+
 
 correlator_time_reference = linspace(0, (length(correlator_output) - 1) * 0.2, length(correlator_output));
 %% Plot Correlator vs. Matched Filter Output
